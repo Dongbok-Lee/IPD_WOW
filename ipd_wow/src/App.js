@@ -41,7 +41,6 @@ const App = () => {
                 <div className="App">
                 <Header/>
                 
-
                 <Footer/>
                 <Reset/>
                 <Routes>
