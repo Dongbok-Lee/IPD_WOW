@@ -124,6 +124,63 @@ const useStyles = makeStyles({
         "&  .react-calendar__month-view__days":{
             height: '30vh',
         },
+        "& .highlight": {
+            color: 'red'
+        },
+        "& .react-calendar__month-view__days__day":{
+            position: 'relative',
+        },
+        "& .react-calendar__tile--active":{
+            borderRadius: '50px',
+            backgroundColor: '#b2b2b2',
+            "&:hover":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:active":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:focus":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:enabled":{
+                backgroundColor: '#b2b2b2'
+            },
+        },
+        "& .react-calendar__tile--now":{
+            backgroundColor: '#FFE3C1',
+            borderRadius: '50px',
+            "&:hover":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:active":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:focus":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:enabled":{
+                backgroundColor: '#FFE3C1'
+            },
+        }
+    },
+    calendarText: {
+        display: 'flex',
+        margin: '5px',
+        fontSize: '10px',
+    },
+    calendarTodayIcon:{
+        width: '9px',
+        height: '9px'
+    },
+    calendarImgHighlight:{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '50px',
+        height: '50px',
+        borderRadius:'50px',
+        transform: 'translate(-50%, -50%)',
+        opacity: 0.6
     }
 
 
@@ -131,11 +188,12 @@ const useStyles = makeStyles({
 
 function MissionScreen() {
     const [answer, setAnswer] = useState();
+    const [missions, setMissionData] = useState([]);
+    const [value, onChange] = useState(new Date());
     const [imageUpload, setImageUpload] = useState(null);
     const [imageURL, setImageURL] = useState();
     const [todayCompleted, setTodayCompleted] = useState(false);
     const [missionIndex, setMissionIndex] = useState(0);
-    const [missionData, setMissionData] = useState([]);
     const classes = useStyles();
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
@@ -147,11 +205,11 @@ function MissionScreen() {
     useEffect(() => {
         getMissionData()
     },[])
-
-    useEffect(() => {
-        if(todayCompleted){
-
-        }
+    useEffect(()=>{
+        setMissionIndex(missions.length)
+    },[missions])
+    useEffect(()=>{
+        getMissionData()
     },[todayCompleted])
 
     const handlePictureChange = (e) =>{
@@ -183,7 +241,9 @@ function MissionScreen() {
             missions.push(doc.data());
             setMissionData(missions);
             console.log(missions)
+            
             if(doc.data().date == today.toLocaleDateString()){
+                setMissionIndex(missions.index-1)
                 setTodayCompleted(true);
                 console.log("오늘미션완료")
                 setImageUpload(doc.data().picture);
@@ -204,7 +264,7 @@ function MissionScreen() {
         })
         const docRef = await addDoc(collection(db, "mission"), {
             answer: answer,
-            question: mission[0],
+            question: mission[missionIndex],
             picture: imageURL,
             createTime: serverTimestamp(),
             user: auth.currentUser.email,
@@ -241,7 +301,7 @@ function MissionScreen() {
                     <p className = {classes.missionHeaderText}>오늘의 미션</p>
                 </div>
                 <div className = {classes.missionContents}>
-                    <p className = {classes.missionText}>{mission[0]}</p>
+                    <p className = {classes.missionText}>{mission[missionIndex]}</p>
                     {todayCompleted ? 
                     <img className = {classes.missionImg} src = {imageUpload}/>
                     : <img className = {classes.missionImg} src = {imageUpload ? URL.createObjectURL(imageUpload) : "img/dummyImage.png"}/>}
@@ -257,7 +317,25 @@ function MissionScreen() {
                 </div>
             </div>
             <div onClick = {() => navigate("/missionDetail")} className = {classes.calendarCard}>
-                <Calendar className = {classes.calendar} formatDay={(locale, date) => moment(date).format("D")}/>
+                <Calendar 
+                    onChange={onChange}
+                    value={value} 
+                    className = {classes.calendar} 
+                    formatDay={(locale, date) => moment(date).format("D")}
+                    tileContent={({ date, view }) => {
+                        let completeDate = false;
+                        let imgURL = null;
+                        missions.forEach((mission) =>{
+                            console.log(mission.date + date.toLocaleDateString())
+                            if(mission.date === date.toLocaleDateString()){
+                                console.log("성공")
+                                imgURL = mission.picture;
+                                completeDate = true;
+                            }
+                        })
+                        return (completeDate ? <img className = {classes.calendarImgHighlight} src = {imgURL}/> : null)
+                    }}
+                />
             </div>
             <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>

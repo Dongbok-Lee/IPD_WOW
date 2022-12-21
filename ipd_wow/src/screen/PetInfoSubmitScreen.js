@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 
 const useStyles = makeStyles({
     petInfoRoot :{

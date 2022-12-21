@@ -105,7 +105,14 @@ function ShoppingScreen() {
             <div className = {classes.shoppingSection}>
                 <p className = {classes.shoppingHeaderText}>MCM ZOO COLLECTION</p>
                 <div className = {classes.productList}>
-                    <div onClick={() => navigate("/shoppingDetail")} className = {classes.productCard}>
+                    <div onClick={() => navigate("/shoppingDetail",
+                    {
+                        state: {
+                            img : "img/product1.png",
+                            name : "비세토스 레빗",
+                            price : " 450,000",
+                    }}
+                    )} className = {classes.productCard}>
                         <div className = {classes.customImage}>
                             <div className = {classes.customButton}>
                                 <p className = {classes.customText}>CUSTOM</p>
@@ -115,25 +122,40 @@ function ShoppingScreen() {
                         <p className = {classes.productName}>비세토스 레빗</p>
                         <p className = {classes.productPrice}> &#8361; 450,000</p>
                     </div>
-                    <div onClick={() => navigate("/shoppingDetail")} className = {classes.productCard}>
+                    <div onClick={() => navigate("/shoppingDetail",
+                    {
+                        state: {
+                            img : "img/product2.png",
+                            name : "비세토스 M PUP 인형",
+                            price : " 650,000",
+                    }}
+                    )} className = {classes.productCard}>
                         <img className = {classes.productImage} src = "img/product2.png"/>
-                        <p className = {classes.productName}>비세토스 레빗</p>
-                        <p className = {classes.productPrice}> &#8361; 450,000</p>
+                        <p className = {classes.productName}>비세토스 M PUP 인형</p>
+                        <p className = {classes.productPrice}> &#8361; 650,000</p>
                     </div>
-                    <div onClick={() => navigate("/shoppingDetail")} className = {classes.productCard}>
+                    <div onClick={() => navigate("/shoppingDetail", {
+                        state: {
+                            img : "img/product3.png",
+                            name : "ONE SIZE 코끼리 참",
+                            price : " 450,000",
+                        }
+                    })} 
+                    className = {classes.productCard}>
                         <img className = {classes.productImage} src = "img/product3.png"/>
-                        <p className = {classes.productName}>비세토스 레빗</p>
+                        <p className = {classes.productName}>ONE SIZE 코끼리 참</p>
                         <p className = {classes.productPrice}> &#8361; 450,000</p>
                     </div>
-                    <div onClick={() => navigate("/shoppingDetail")} className = {classes.productCard}>
-                        <img className = {classes.productImage} src = "img/product2.png"/>
-                        <p className = {classes.productName}>비세토스 레빗</p>
-                        <p className = {classes.productPrice}> &#8361; 450,000</p>
-                    </div>
-                    <div onClick={() => navigate("/shoppingDetail")} className = {classes.productCard}>
-                        <img className = {classes.productImage} src = "img/product3.png"/>
-                        <p className = {classes.productName}>비세토스 레빗</p>
-                        <p className = {classes.productPrice}> &#8361; 450,000</p>
+                    <div onClick={() => navigate("/shoppingDetail",{
+                        state: {
+                            img : "img/product4.png",
+                            name : "ONE SIZE 래빗 참",
+                            price : " 550,000",
+                        }})
+                    } className = {classes.productCard}>
+                        <img className = {classes.productImage} src = "img/product4.png"/>
+                        <p className = {classes.productName}>ONE SIZE 래빗 참</p>
+                        <p className = {classes.productPrice}> &#8361; 550,000</p>
                     </div>
                 </div>
             </div>

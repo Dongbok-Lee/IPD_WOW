@@ -226,6 +226,8 @@ function MissionDetailScreen() {
         const auth = getAuth();
         const q = query(collection(db, "mission"), where("user", "==", auth.currentUser.email));
         const querySnapshot = await getDocs(q)
+
+        
         querySnapshot.forEach((doc) => {
             missions.push(doc.data());
             setMissionData(missions);

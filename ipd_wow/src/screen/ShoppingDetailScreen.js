@@ -1,11 +1,13 @@
-import React from 'react'
-import { makeStyles, styled } from '@material-ui/core/styles';
+import React, {useState} from 'react'
+import { makeStyles} from '@material-ui/core/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import SimpleSlider from '../components/SimpleSlider';
-import { TextField, Button} from "@material-ui/core";
+import {Button} from "@material-ui/core";
+import { useLocation } from 'react-router-dom';
+
 
 
 const useStyles = makeStyles({
@@ -133,9 +135,14 @@ const useStyles = makeStyles({
 
 })
 
-function ShoppingDetailScreen() {
+function ShoppingDetailScreen({price, image, name}) {
     const classes = useStyles();
+    const location = useLocation();
+    const [neckLace, setNeckLace] = useState(true);
+    const [body, setBody] = useState(false);
+    const [backSpace, setbackSpace] = useState(false);
 
+    console.log('state', location.state)
     return (
         <div className = {classes.mainContainer}>
             <div className = {classes.searchSection}>
@@ -146,9 +153,9 @@ function ShoppingDetailScreen() {
             </div>
             <div className = {classes.shoppingSection}>
                 <p className = {classes.shoppingHeaderText}>MCM ZOO COLLECTION</p>
-                <img className = {classes.shoppingImage} src = "img/product2.png"/>
-                <p className = {classes.productName}>비세토스 M PUP 인형</p>
-                <p className = {classes.productPrice}> &#8361; 650,000</p>
+                <img className = {classes.shoppingImage} src = {location.state.img}/>
+                <p className = {classes.productName}>{location.state.name}</p>
+                <p className = {classes.productPrice}> &#8361; {location.state.price}</p>
             </div>
             <div className ={classes.colorSection}>
                     <p className = {classes.colorText}>color</p>
@@ -157,15 +164,15 @@ function ShoppingDetailScreen() {
             <div className = {classes.otherOption}>
                 <div className = {classes.optionButtons}>
                     <div className ={classes.optionSelect}>
-                        <button className = {classes.activeOptionButton}>
+                        <button onClick = {()=>setNeckLace(!neckLace)} className = {`${ neckLace ? classes.activeOptionButton : classes.optionButton}`}>
                             기본 목걸이
                         </button>
                         <input className =  {classes.optionInput} placeholder = "메세지를 입력하세요"/>
                     </div>
-                    <button className = {classes.optionButton}>
+                    <button onClick = {()=>setBody(!body)} className = {`${ body ? classes.activeOptionButton : classes.optionButton}`}>
                         몸통 각인
                     </button>
-                    <button className = {classes.optionButton}>
+                    <button onClick = {()=>setbackSpace(!backSpace)} className = {`${ backSpace ? classes.activeOptionButton : classes.optionButton}`}>
                         등 수납 공간
                     </button>
                 </div>

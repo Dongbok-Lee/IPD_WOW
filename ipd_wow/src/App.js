@@ -21,6 +21,8 @@ import ShoppingScreen from './screen/ShoppingScreen';
 import ShoppingDetailScreen from './screen/ShoppingDetailScreen';
 import SimpleSlider from './components/SimpleSlider';
 import PrivateRoute from './components/PrivateRoute';
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 function setScreenSize() {
     let vh = window.innerHeight * 0.01;
@@ -34,36 +36,38 @@ const App = () => {
     document.getElementById('root').style.fontFamily = 'NotoSansKRR';
     return(
         <React.Fragment>
-            <SplashScreen/>
-            <div className="App">
-            <Header/>
-            
-
-            <Footer/>
-            <Reset/>
-            <Routes>
-            <Route path="/" element={<SignInScreen/>}/>
-            <Route path="/" element={<PrivateRoute />}>
-                <Route path="/submit/petInfo" element={<PetInfoSubmitScreen/>}/>
-                <Route path="/submit/petPic" element={<PetPicSubitScreen/>}/>
-
-                <Route path="/home" element={<MainScreen/>}/>
-                <Route path="/customSpace" element={<CustomSpaceScreen/>}/>
-
-                <Route path="/mission" element={<MissionScreen/>}/>
-                <Route path="/missionDetail" element={<MissionDetailScreen/>}/>
-
-                <Route path="/contest" element={<ContestScreen/>}/>
-                <Route path="/ContestDetail" element={<ContestDetailScreen/>}/>
-
-                <Route path="/community" element={<CommunityDetailScreen/>}/>
-                <Route path="/communityDetail" element={<CommunityScreen/>}/>
+            <DndProvider backend={HTML5Backend}>
+                <SplashScreen/>
+                <div className="App">
+                <Header/>
                 
-                <Route path="/shopping" element={<ShoppingScreen/>}/>
-                <Route path="/shoppingDetail" element={<ShoppingDetailScreen/>}/>
-            </Route>
-            </Routes>
-            </div>
+
+                <Footer/>
+                <Reset/>
+                <Routes>
+                <Route path="/" element={<SignInScreen/>}/>
+                <Route path="/" element={<PrivateRoute />}>
+                    <Route path="/submit/petInfo" element={<PetInfoSubmitScreen/>}/>
+                    <Route path="/submit/petPic" element={<PetPicSubitScreen/>}/>
+
+                    <Route path="/home" element={<MainScreen/>}/>
+                    <Route path="/customSpace" element={<CustomSpaceScreen/>}/>
+
+                    <Route path="/mission" element={<MissionScreen/>}/>
+                    <Route path="/missionDetail" element={<MissionDetailScreen/>}/>
+
+                    <Route path="/contest" element={<ContestScreen/>}/>
+                    <Route path="/ContestDetail" element={<ContestDetailScreen/>}/>
+
+                    <Route path="/community" element={<CommunityDetailScreen/>}/>
+                    <Route path="/communityDetail" element={<CommunityScreen/>}/>
+                    
+                    <Route path="/shopping" element={<ShoppingScreen/>}/>
+                    <Route path="/shoppingDetail" element={<ShoppingDetailScreen/>}/>
+                </Route>
+                </Routes>
+                </div>
+            </DndProvider>
         </React.Fragment>
     )
 }

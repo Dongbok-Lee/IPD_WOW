@@ -90,7 +90,7 @@ const useStyles = makeStyles({
 
 function PetPicSubitScreen() {
     const [imageUpload, setImageUpload] = useState(null);
-    const [imageURL, setImageURL] = useState("img/");
+    const [imageURL, setImageURL] = useState();
 
     const location = useLocation();
     console.log('state', location.state)
