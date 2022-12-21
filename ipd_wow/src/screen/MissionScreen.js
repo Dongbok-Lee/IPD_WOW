@@ -131,7 +131,6 @@ const useStyles = makeStyles({
             position: 'relative',
         },
         "& .react-calendar__tile--active":{
-            borderRadius: '50px',
             backgroundColor: '#b2b2b2',
             "&:hover":{
                 backgroundColor: '#b2b2b2'
@@ -148,7 +147,6 @@ const useStyles = makeStyles({
         },
         "& .react-calendar__tile--now":{
             backgroundColor: '#FFE3C1',
-            borderRadius: '50px',
             "&:hover":{
                 backgroundColor: '#FFE3C1'
             },
@@ -197,8 +195,21 @@ function MissionScreen() {
     const classes = useStyles();
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
     const handleClick = () => {
         setOpen(true);
+    };
+
+    const handleClick2 = () => {
+        setOpen2(true);
+    };
+
+    const handleClose2 = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen2(false);
     };
     const  today = new Date();
 
@@ -218,7 +229,10 @@ function MissionScreen() {
         console.log(imageUpload);
     }
     const upload = () => {
-        if (imageUpload === null) return;
+        if (imageUpload === null){
+            handleClick2()
+            return;
+        } 
         console.log(imageUpload);
         const imageRef = ref(storage, `images/${imageUpload.name}`);
         // `images === 참조값이름(폴더이름), / 뒤에는 파일이름 어떻게 지을지
@@ -340,6 +354,11 @@ function MissionScreen() {
             <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     성공적으로 등록되었습니다!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={open2}  autoHideDuration={1000} onClose={handleClose2}>
+                <Alert onClose={handleClose2} severity="error" sx={{ width: '100%' }}>
+                    등록에 실패했습니다. 입력값을 다시 확인해주세요!
                 </Alert>
             </Snackbar>
         </div>

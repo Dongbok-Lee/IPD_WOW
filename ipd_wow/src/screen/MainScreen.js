@@ -32,7 +32,7 @@ const useStyles = makeStyles({
         width: '60px',
         height: '60px',
         borderRadius: '50px',
-        margin: '10px 10px 10px 5vw'
+        margin: '10px 30px 10px 5vw'
     },
     userProfile:{
         display: 'flex',
@@ -55,19 +55,19 @@ const useStyles = makeStyles({
     userLevelText:{
         fontSize: '12px',
         fontWeight: 'bold',
+        margin: '5px'
     },
     graphOutline:{
-        height: '4px',
+        height: '10px',
         width: '100px',
         backgroundColor:'#ffffff',
         borderRadius: '15px',
     },
     graphInline:{
-        height: '4px',
+        height: '10px',
         width: '80px',
         backgroundColor:'#F5AB52',
         borderRadius: '15px',
-        margin: '3px'
     },
     trophyBar:{
         left: '5vw',
@@ -75,7 +75,7 @@ const useStyles = makeStyles({
         backgroundColor:'#FFFFFF',
         display: 'flex',
         alignItems: 'center',
-        borderRadius: '50px 0 0 50px',
+        borderRadius: '100px 0 0 100px',
         height: '100%',
         width: '100vw',
         boxShadow: '5px 5px 5px grey',
@@ -87,7 +87,7 @@ const useStyles = makeStyles({
         backgroundColor:'#FFFFFF',
         display: 'flex',
         alignItems: 'center',
-        borderRadius: '50px 0 0 50px',
+        borderRadius: '100px 0 0 100px',
         height: '100%',
         width: '100vw',
         boxShadow: '5px 5px 5px grey',
@@ -100,7 +100,7 @@ const useStyles = makeStyles({
         border: '2px solid #F5AB52'
     },
     trophyText:{
-        fontSize: '10px'
+        fontSize: '13px'
     },
     trophyListInfo:{
         height: '80vw',
@@ -187,6 +187,9 @@ const useStyles = makeStyles({
         position: 'absolute',
         background: 'linear-gradient(#DD6280, #F5AB52)'
     },
+    petList:{
+        display:'flex'
+    }
 
 });
 
@@ -267,10 +270,10 @@ return (
                 </div>
                 <div className= {classes.userProfile}>
                     <div className = {classes.userName}>
-                        {userData[0].name}
+                        {userData[0].nickname}
                     </div>
                     <div className = {classes.userLevel}>
-                        <div className = {classes.userLevelText}>LV. {userData[0].level/100}</div>
+                        <div className = {classes.userLevelText}>LV. {parseInt(userData[0].level/100)}</div>
                         <div className= {classes.userLevelGraph}>
                             <div className = {classes.graphOutline}>
                                 <div style = {{width: userData[0].level%100}} className = {classes.graphInline}/>
@@ -290,7 +293,9 @@ return (
                     margin: '5px'
                 }}/>
             </div>
+            <div className = {classes.petList}>
             {pets.map((pet)=>(<PetCard petInfo = {pet}/>))}
+            </div>
         </div>
         <div className= {classes.petSpace}>
             <img className = {classes.spaceImage} src = "img/background2.png"/>

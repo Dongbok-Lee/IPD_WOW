@@ -8,7 +8,8 @@ import { useLocation } from 'react-router-dom';
 import { getAuth} from "firebase/auth";
 import {ref, getDownloadURL, uploadBytesResumable} from "firebase/storage";
 import { collection, addDoc,  serverTimestamp  } from "firebase/firestore"; 
-
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import {storage, db} from "../fbase.js";
 
 const useStyles = makeStyles({
@@ -91,6 +92,7 @@ const useStyles = makeStyles({
 function PetPicSubitScreen() {
     const [imageUpload, setImageUpload] = useState(null);
     const [imageURL, setImageURL] = useState();
+    const [open, setOpen] = React.useState(false);
 
     const location = useLocation();
     console.log('state', location.state)
@@ -99,24 +101,52 @@ function PetPicSubitScreen() {
     const goHomeScreen = () =>{
         navigate("/home");
     }
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen(false);
+    };
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+
     const handlePictureChange = (e) =>{
         e.preventDefault();
         setImageUpload(e.target.files[0]);
         console.log(imageUpload);
     }
     const upload = () => {
-        if (imageUpload === null) return;
+        if (imageUpload === null){
+            handleClick()
+            return;
+        }
         console.log(imageUpload);
-        const imageRef = ref(storage, `images/${imageUpload.name}`);
-        // `images === 참조값이름(폴더이름), / 뒤에는 파일이름 어떻게 지을지
-        uploadBytesResumable(imageRef, imageUpload).then((snapshot) => {
-          // 업로드 되자마자 뜨게 만들기
-        getDownloadURL(snapshot.ref).then((url) => {
-            setImageURL(url);
-            console.log(url);
-        })
-        // 
-        });
+
+        try{
+            const imageRef = ref(storage, `images/${imageUpload.name}`);
+            // `images === 참조값이름(폴더이름), / 뒤에는 파일이름 어떻게 지을지
+            uploadBytesResumable(imageRef, imageUpload).then((snapshot) => {
+              // 업로드 되자마자 뜨게 만들기
+            getDownloadURL(snapshot.ref).then((url) => {
+                setImageURL(url);
+                console.log(url);
+            })
+            // 
+            });
+        }catch(error){
+            console.log(error.message)
+            handleClick()
+        }
+
     };
 
     useEffect(() => {
@@ -124,30 +154,37 @@ function PetPicSubitScreen() {
     },[imageURL])
 
     const saveData = async() => {
-        const auth =getAuth();
-        console.log({
-            character: location.state.petCharacter,
-            name: location.state.petName,
-            picture: imageURL,
-            sex: location.state.petSex,
-            type : location.state.petType,
-            age : location.state.petAge,
-            createTime: serverTimestamp(),
-            user: auth.currentUser.email
-        })
-        const docRef = await addDoc(collection(db, "pet"), {
-            character: location.state.petCharacter,
-            name: location.state.petName,
-            picture: imageURL,
-            sex: location.state.petSex,
-            type : location.state.petType,
-            age : location.state.petAge,
-            createTime: serverTimestamp(),
-            user: auth.currentUser.email
-        });
-        goHomeScreen();
+        try{
+            const auth =getAuth();
+            console.log({
+                character: location.state.petCharacter,
+                name: location.state.petName,
+                picture: imageURL,
+                sex: location.state.petSex,
+                type : location.state.petType,
+                age : location.state.petAge,
+                createTime: serverTimestamp(),
+                user: auth.currentUser.email
+            })
+            const docRef = await addDoc(collection(db, "pet"), {
+                character: location.state.petCharacter,
+                name: location.state.petName,
+                picture: imageURL,
+                sex: location.state.petSex,
+                type : location.state.petType,
+                age : location.state.petAge,
+                createTime: serverTimestamp(),
+                user: auth.currentUser.email
+            });
+            goHomeScreen();
+    
+            console.log("Document written with ID: ", docRef.id);
+        }catch(error){
+            console.log(error.message)
+        }
+        
+        
 
-        console.log("Document written with ID: ", docRef.id);
     }
 return (
 <div className= {classes.petInfoRoot}>
@@ -182,6 +219,11 @@ return (
     <div className = {classes.nextButton}>
         <Button onClick = {upload} className = {classes.submitButton}>다음</Button>
     </div>
+    <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+            제출에 실패했습니다. 올바른 입력인지 확인해주세요!
+        </Alert>
+    </Snackbar>
 </div>
 )
 }

@@ -7,6 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import SimpleSlider from '../components/SimpleSlider';
 import {Button} from "@material-ui/core";
 import { useLocation } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 
 
@@ -141,7 +143,22 @@ function ShoppingDetailScreen({price, image, name}) {
     const [neckLace, setNeckLace] = useState(true);
     const [body, setBody] = useState(false);
     const [backSpace, setbackSpace] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const handleClick = () => {
+        setOpen(true);
+    };
 
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen(false);
+    };
     console.log('state', location.state)
     return (
         <div className = {classes.mainContainer}>
@@ -179,8 +196,13 @@ function ShoppingDetailScreen({price, image, name}) {
                 
             </div>
             <div className = {classes.nextButton}>
-                <Button className = {classes.submitButton}>다음</Button>
+                <Button onClick={handleClick} className = {classes.submitButton}>다음</Button>
             </div>
+            <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                    상품 구매 기간이 아닙니다!
+                </Alert>
+            </Snackbar>
         </div>
 
 

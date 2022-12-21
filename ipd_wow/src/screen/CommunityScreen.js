@@ -4,6 +4,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import MessageIcon from '@mui/icons-material/Message';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import {useLocation} from 'react-router-dom'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const useStyles = makeStyles({
     mainContainer: {
@@ -40,7 +42,7 @@ const useStyles = makeStyles({
         margin : '5px',
     },
     context:{
-        fontSize: '10px',
+        fontSize: '15px',
     },
     reactText:{
         fontSize: '12px',
@@ -73,8 +75,24 @@ const useStyles = makeStyles({
 })
 
 function CommunityScreen() {
+    const [open, setOpen] = React.useState(false);
     const classes = useStyles();
     const location = useLocation();
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen(false);
+    };
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
 
     return (
         <div className={classes.mainContainer}>
@@ -84,17 +102,17 @@ function CommunityScreen() {
                         <img className = {classes.userImage} src= "img/communityUserProfile.png"/>
                         <p className = {classes.userName}>큐티블리</p>
                     </div>
-                    <MoreHorizIcon/>
+                    <MoreHorizIcon onClick={handleClick}/>
                 </div>
                 <div className = {classes.communityCard}>
                     <img className = {classes.communityImg} src = {location.state.img}/>
                     <div className={classes.reactionSection}>
                         <div className = {classes.favoriteSection}>
-                            <FavoriteIcon sx ={{fontSize: '16px'}} />
+                            <FavoriteIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>11</p>
                         </div>
                         <div className = {classes.massageSection}>
-                            <MessageIcon sx ={{fontSize: '16px'}} />
+                            <MessageIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>7</p>
                         </div>
                     </div>
@@ -110,17 +128,17 @@ function CommunityScreen() {
                         <img className = {classes.userImage} src= "img/communityUserProfile.png"/>
                         <p className = {classes.userName}>큐티블리</p>
                     </div>
-                    <MoreHorizIcon/>
+                    <MoreHorizIcon onClick={handleClick}/>
                 </div>
                 <div className = {classes.communityCard}>
                     <img className = {classes.communityImg} src = "img/dummyDogCommunity.png"/>
                     <div className={classes.reactionSection}>
                         <div className = {classes.favoriteSection}>
-                            <FavoriteIcon sx ={{fontSize: '16px'}} />
+                            <FavoriteIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>21</p>
                         </div>
                         <div className = {classes.massageSection}>
-                            <MessageIcon sx ={{fontSize: '16px'}} />
+                            <MessageIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>9</p>
                         </div>
                     </div>
@@ -138,17 +156,17 @@ function CommunityScreen() {
                         <img className = {classes.userImage} src= "img/profileDummy2.png"/>
                         <p className = {classes.userName}>티티</p>
                     </div>
-                    <MoreHorizIcon/>
+                    <MoreHorizIcon onClick={handleClick}/>
                 </div>
                 <div className = {classes.communityCard}>
                     <img className = {classes.communityImg} src = "img/test12.png"/>
                     <div className={classes.reactionSection}>
                         <div className = {classes.favoriteSection}>
-                            <FavoriteIcon sx ={{fontSize: '16px'}} />
+                            <FavoriteIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>2</p>
                         </div>
                         <div className = {classes.massageSection}>
-                            <MessageIcon sx ={{fontSize: '16px'}} />
+                            <MessageIcon onClick={handleClick} sx ={{fontSize: '16px'}} />
                             <p className = {classes.reactText}>5</p>
                         </div>
                     </div>
@@ -160,6 +178,11 @@ function CommunityScreen() {
                 </div>
                 
             </div>
+            <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                    해당 기능은 준비중입니다!
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

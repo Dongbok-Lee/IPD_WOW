@@ -3,7 +3,7 @@ import { makeStyles} from '@material-ui/core/styles';
 import { TextField, Button } from "@material-ui/core";
 import { useNavigate } from 'react-router-dom';
 import { auth, db} from '../fbase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { getAuth} from "firebase/auth";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -109,8 +109,15 @@ function SignInScreen() {
     const classes = useStyles();
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    
     const handleClick = () => {
         setOpen(true);
+    };
+    const handleClick2 = () => {
+        setOpen2(true);
     };
     const authLogin = async() =>{
         const auth =getAuth();
@@ -157,6 +164,14 @@ function SignInScreen() {
         setOpen(false);
     };
 
+    const handleClose2 = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen2(false);
+    };
+
     const [userData, setUserData] = useState(null);
 
     function handleGoogleLogin() {
@@ -172,13 +187,38 @@ function SignInScreen() {
         });
     }
 
+    const login = async() => {
+        try{
+            const auth = getAuth();
+            console.log(email + password)
+            const user = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password,
+            )
+            console.log(user);
+            goHomePage();
+        }catch(error){
+            console.log(error.message)
+            handleClick2()
+        }
+
+    }
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
+
     return (
         <div>
             <div className= {classes.loginRoot} >
                 <img className = {classes.logoImg} src="img/loginLogoImg.svg"/>
                 <div className = {classes.loginForm}>
-                    <TextField className={classes.loginInput} id="outlined-basic" label="email" variant="outlined" />
-                    <TextField className={classes.loginInput} id="outlined-basic" label="password" variant="outlined" />
+                    <TextField onChange = {handleEmailChange} value = {email} className={classes.loginInput} id="outlined-basic" label="email" variant="outlined" />
+                    <TextField type="password" onChange = {handlePasswordChange} value = {password} className={classes.loginInput} id="outlined-basic" label="password" variant="outlined" />
                 </div>
                 <div className = {classes.loginButtons}>
                     <div>
@@ -187,8 +227,8 @@ function SignInScreen() {
                         <img onClick={handleClick} className = {classes.oauthButton} src="img/kakao.png"/>
                         <img onClick={handleClick} className = {classes.oauthButton} src="img/naver.png"/>
                     </div>
-                    <Button  className = {classes.loginButton} variant="contained">로그인</Button>
-                    <Button onClick={handleClick}className = {classes.signUpButton} variant="contained">회원가입</Button>
+                    <Button onClick={login} className = {classes.loginButton} variant="contained">로그인</Button>
+                    <Button onClick={handleClick} className = {classes.signUpButton} variant="contained">회원가입</Button>
                     <div className = {classes.findIdForm}>
                         <a onClick={handleClick} className = {classes.findIdText}>아이디 찾기</a>
                         <a onClick={handleClick} className = {classes.findIdText}>비밀번호 찾기</a>
@@ -199,6 +239,11 @@ function SignInScreen() {
             <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
                     해당 기능은 준비중입니다!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={open2}  autoHideDuration={1000} onClose={handleClose2}>
+                <Alert onClose={handleClose2} severity="error" sx={{ width: '100%' }}>
+                    로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.
                 </Alert>
             </Snackbar>
         </div>

@@ -6,6 +6,7 @@ const useStyles = makeStyles({
         display: 'flex',
         justifyContent: 'left',
         alignItems: 'center',
+        marginRight: '10vw'
     },
     petInfoLine:{
         display: 'flex',

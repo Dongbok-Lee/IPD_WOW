@@ -59,7 +59,6 @@ const useStyles = makeStyles({
             position: 'relative',
         },
         "& .react-calendar__tile--active":{
-            borderRadius: '50px',
             backgroundColor: '#b2b2b2',
             "&:hover":{
                 backgroundColor: '#b2b2b2'
@@ -76,7 +75,6 @@ const useStyles = makeStyles({
         },
         "& .react-calendar__tile--now":{
             backgroundColor: '#FFE3C1',
-            borderRadius: '50px',
             "&:hover":{
                 backgroundColor: '#FFE3C1'
             },
@@ -89,6 +87,9 @@ const useStyles = makeStyles({
             "&:enabled":{
                 backgroundColor: '#FFE3C1'
             },
+        },
+        "& .react-calendar__navigation__label__labelText":{
+            color:'#000000'
         }
     },
     calendarText: {
@@ -110,11 +111,12 @@ const useStyles = makeStyles({
     },
     todayMissionText:{
         color: '#fff',
-        fontSize: '10px',
+        fontSize: '13px',
         backgroundColor: '#F5AB52',
         borderRadius: '25px',
-        padding: '7px',
-        width: '90%',
+        padding: '10px',
+        width: '80vw',
+        textAlign: 'center'
     },
     missionNumber:{
         fontWeight: 'bold',
@@ -127,11 +129,11 @@ const useStyles = makeStyles({
         width: '100%',
     },
     answerText:{
-        fontSize:"10px",
-        width: '50%',
+        fontSize:"13px",
+        width: '70%',
         background: '#fff',
         borderRadius: '10px',
-        padding: '5px',
+        padding: '10px',
         margin: '10px 10px 0 10px',
         boxShadow: '3px 3px 3px #b2b2b2',
     },
@@ -185,7 +187,7 @@ const useStyles = makeStyles({
         left: '50%',
         width: '50px',
         height: '50px',
-        borderRadius:'50px',
+        borderRadius:'100px',
         transform: 'translate(-50%, -50%)',
         opacity: 0.6
     }

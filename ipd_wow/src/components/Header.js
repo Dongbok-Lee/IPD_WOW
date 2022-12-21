@@ -7,6 +7,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import {useNavigate, useLocation} from 'react-router-dom'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const useStyles = makeStyles({
     headerRoot:{
@@ -33,7 +35,7 @@ const useStyles = makeStyles({
         justifyContent: 'start',
         textAlign:'center',
         flexDirection: 'column',
-        width: '70vw',
+        width: '50vw',
         height: '70vh',
         top: 0,
         left: 0,
@@ -105,6 +107,22 @@ function Header() {
     const [headerText, setHeaderText] = useState("MY ZOO");
     const [isDetailPage, setIsDetailPage] = useState(false);
     const navigate = useNavigate();
+    const [open, setOpen] = React.useState(false);
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen(false);
+    };
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
     useEffect(()=>{
         switch(location.pathname){
             case "/home":
@@ -167,12 +185,12 @@ function Header() {
                 {headerText}
             </div>
             <div className={classes.headerRightIcon}>
-                {(location.pathname == "/community" || location.pathname == "/communityDetail") && <AddBoxIcon   className = {classes.headerIcon}  sx = {{
+                {(location.pathname == "/community" || location.pathname == "/communityDetail") && <AddBoxIcon onClick={handleClick} className = {classes.headerIcon}  sx = {{
                         color: '#fff', 
                         width: '20px', 
                         height: '20px'
                     }}/>}
-                <NotificationsNoneIcon   className = {classes.headerIcon}  sx = {{
+                <NotificationsNoneIcon onClick={handleClick}  className = {classes.headerIcon}  sx = {{
                     color: '#fff', 
                     width: '20px', 
                     height: '20px'
@@ -184,48 +202,53 @@ function Header() {
                     <SettingsIcon sx = {{color:'#ffffff' ,width: '33px', height: '33px', margin : '5px'}}/>
                 </div>
                 <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>회원정보 수정</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
-                <div className={classes.hrLine}/>
-                <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                <div  className={classes.hrLine}/>
+                <div  className = {classes.menuList}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>내 활동</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
                 <div className={classes.hrLine}/>
                 <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>공지사항</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
                 <div className={classes.hrLine}/>
                 <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>알림 설정</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
                 <div className={classes.hrLine}/>
                 <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>고객 센터</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
                 <div className={classes.hrLine}/>
                 <div className = {classes.menuList}>
-                    <div className = {classes.menuText}>
+                    <div onClick={handleClick} className = {classes.menuText}>
                         <p>앱 정보</p>
                         <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
                     </div>
                 </div>
             </div>
         <div onClick = {() => setMenuOn(false)} className = {`${menuOn ? classes.disableContainer:null}`}/>
+        <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                    해당 기능은 준비중입니다!
+                </Alert>
+        </Snackbar>
         </>
     )
 }   

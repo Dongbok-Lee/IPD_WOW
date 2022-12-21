@@ -108,7 +108,7 @@ function ShoppingScreen() {
                     <div onClick={() => navigate("/shoppingDetail",
                     {
                         state: {
-                            img : "img/product1.png",
+                            img : "img/product5.png",
                             name : "비세토스 레빗",
                             price : " 450,000",
                     }}
@@ -117,7 +117,7 @@ function ShoppingScreen() {
                             <div className = {classes.customButton}>
                                 <p className = {classes.customText}>CUSTOM</p>
                             </div>
-                            <img className = {classes.productImage} src = "img/product1.png"/>
+                            <img className = {classes.productImage} src = "img/product5.png"/>
                         </div>
                         <p className = {classes.productName}>비세토스 레빗</p>
                         <p className = {classes.productPrice}> &#8361; 450,000</p>
@@ -125,36 +125,36 @@ function ShoppingScreen() {
                     <div onClick={() => navigate("/shoppingDetail",
                     {
                         state: {
-                            img : "img/product2.png",
+                            img : "img/product6.png",
                             name : "비세토스 M PUP 인형",
                             price : " 650,000",
                     }}
                     )} className = {classes.productCard}>
-                        <img className = {classes.productImage} src = "img/product2.png"/>
+                        <img className = {classes.productImage} src = "img/product6.png"/>
                         <p className = {classes.productName}>비세토스 M PUP 인형</p>
                         <p className = {classes.productPrice}> &#8361; 650,000</p>
                     </div>
                     <div onClick={() => navigate("/shoppingDetail", {
                         state: {
-                            img : "img/product3.png",
-                            name : "ONE SIZE 코끼리 참",
+                            img : "img/product7.png",
+                            name : "ONE SIZE 불독",
                             price : " 450,000",
                         }
                     })} 
                     className = {classes.productCard}>
-                        <img className = {classes.productImage} src = "img/product3.png"/>
-                        <p className = {classes.productName}>ONE SIZE 코끼리 참</p>
+                        <img className = {classes.productImage} src = "img/product7.png"/>
+                        <p className = {classes.productName}>ONE SIZE 불독</p>
                         <p className = {classes.productPrice}> &#8361; 450,000</p>
                     </div>
                     <div onClick={() => navigate("/shoppingDetail",{
                         state: {
-                            img : "img/product4.png",
-                            name : "ONE SIZE 래빗 참",
+                            img : "img/product8.png",
+                            name : "ONE SIZE 래빗",
                             price : " 550,000",
                         }})
                     } className = {classes.productCard}>
-                        <img className = {classes.productImage} src = "img/product4.png"/>
-                        <p className = {classes.productName}>ONE SIZE 래빗 참</p>
+                        <img className = {classes.productImage} src = "img/product8.png"/>
+                        <p className = {classes.productName}>ONE SIZE 래빗</p>
                         <p className = {classes.productPrice}> &#8361; 550,000</p>
                     </div>
                 </div>

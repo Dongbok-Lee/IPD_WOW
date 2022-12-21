@@ -18,34 +18,34 @@ const useStyles = makeStyles({
         left: '30%',
     },
     dogText:{
-        fontSize: '10px',
+        fontSize: '16px',
         textAlign: 'center',
         width: '60px',
         backgroundColor:'#ffffff',
         borderRadius: '10px',
-        padding: '3px',
+        padding: '1vw',
         fontWeight: 'bold',
     },
     catText:{
-        fontSize: '10px',
+        fontSize: '16px',
         textAlign: 'center',
         width: '60px',
         backgroundColor:'#ffffff',
         borderRadius: '10px',
-        padding: '3px',
+        padding: '1vw',
         fontWeight: 'bold',
     },
     petImage:{
-        width: '70px',
-        height:'128px'
+        width: '25vw',
+        height:'44vw'
     },
     petImage2:{
-        width: '128px',
-        height:'128px'
+        width: '30vw',
+        height:'30vw'
     }
 })
 
-function Pet({index, type, name}) {
+function CustomPet({index, type, name}) {
     console.log(index == 0)
     const classes = useStyles();
     return (
@@ -58,4 +58,4 @@ function Pet({index, type, name}) {
     )
 }
 
-export default Pet;
+export default CustomPet;
