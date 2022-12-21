@@ -1,10 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Circle from '../components/Circle';
 import {  Button} from "@material-ui/core";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -117,14 +116,20 @@ const useStyles = makeStyles({
         alignItems: 'center',
     },
     activeIcon:{
-        margin: '5px',
+        padding: '5px',
+        margin : '5px',
         borderRadius: '50px',
         backgroundColor: '#F5AB52',
     },
     disActiveIcon:{
-        margin: '5px',
+        margin : '5px',
+        padding: '3px',
+        border: '2px solid #F5AB52',
         borderRadius: '50px',
-        backgroundColor: '#F5AB52',
+        backgroundColor: '#ffffff',
+        "& .MuiSvgIcon-root":{
+            color : '#b4b4b4'
+        }
     },
     submitButton:{
         width: '300px',
@@ -141,10 +146,47 @@ const useStyles = makeStyles({
 })
 
 function PetInfoSubmit() {
+    const [petSex, setPetSex] = useState("남아");
+    const [petType, setPetType] = React.useState("강아지");
+    const [petCharacter, setPetCharacter] = useState("활발");
+    const [petName, setPetName] = useState("");
+    const [petAge, setPetAge] = useState();
     const classes = useStyles();
     const navigate = useNavigate();
     const goSubmitPicPage = () =>{
-        navigate("/submit/petPic");
+        navigate("/submit/petPic", {
+            state: {
+                petSex : petSex,
+                petType : petType,
+                petCharacter : petCharacter,
+                petName : petName,
+                petAge : petAge,
+            }
+        });
+    }
+
+    const handleTypeChange = (event) => {
+        setPetType(event.target.value);
+    };
+
+    const handleCharacterChange = (event) => {
+        setPetCharacter(event.target.value);
+    };
+
+    const handleAgeChange = (event) => {
+        setPetAge(event.target.value);
+    };
+
+    const handleNameChange = (event) => {
+        setPetName(event.target.value);
+    };
+
+    const selectMale = () =>{
+        setPetSex("남아");
+    }
+
+    const selectFemale = () =>{
+        setPetSex("여아");
     }
 
     return (
@@ -162,7 +204,7 @@ function PetInfoSubmit() {
                 <div className = {classes.petInfoFirst}>
                     <div>
                         <p className = {`${classes.petInputText} ${classes.margin5}`}>반려동물 종류</p>
-                        <Select className = {classes.typeSelect} value = {"강아지"} >
+                        <Select className = {classes.typeSelect} value = {petType} onChange = {handleTypeChange} >
                             <MenuItem value={"강아지"}>강아지</MenuItem>
                             <MenuItem value={"고양이"}>고양이</MenuItem>
                             <MenuItem value={"기타"}>기타</MenuItem>
@@ -173,14 +215,14 @@ function PetInfoSubmit() {
                             <p className = {`${classes.petInputText} ${classes.margin5}`}>성별</p>
                         </div>
                         <div className = {classes.selectSexButton}>
-                            <div className ={classes.activeIcon}>
+                            <div onClick = {selectMale} className ={`${petSex == "남아" ?  classes.activeIcon : classes.disActiveIcon }`}>
                                 <MaleIcon sx = {{
                                 color: '#fff',
                                 width: '35px',
                                 height:'35px',
                                 }}/>
                             </div>
-                            <div className = {classes.disActiveIcon}>
+                            <div onClick = {selectFemale} className = {`${petSex == "여아" ?  classes.activeIcon : classes.disActiveIcon }`}>
                                 <FemaleIcon sx = {{
                                 color: '#fff',
                                 width: '35px',
@@ -192,27 +234,27 @@ function PetInfoSubmit() {
                 </div>
                 <div>
                     <p className = {`${classes.petInputText} ${classes.margin5}`}>반려동물 이름</p>
-                    <input type="text" className= {classes.nameInput} name="name" required minlength="4" maxlength="8" size="10"/>
+                    <input onChange = {handleNameChange} value = {petName} type="text" className= {classes.nameInput} name="name"/>
                 </div>
                 <div>
                     <p className = {`${classes.petInputText} ${classes.margin5}`}>나이</p>
-                    <input type="text" className= {classes.ageInput} name="name" required minlength="4" maxlength="8" size="10"/>
+                    <input onChange={handleAgeChange} value={petAge} type="number" className= {classes.ageInput} name="age" />
                 </div>
                 <div>
                     <p className = {`${classes.petInputText} ${classes.margin5}`}>성격</p>
                     <div className = {classes.typeInputs}>
-                        <Select value = {"활발"}  className = {classes.characterSelect}>
+                        <Select value = {petCharacter} onChange = {handleCharacterChange}  className = {classes.characterSelect}>
                                 <MenuItem value={"활발"}>활발</MenuItem>
                                 <MenuItem value={"온순"}>온순</MenuItem>
                                 <MenuItem value={"예민"}>예민</MenuItem>
                                 <MenuItem value={"난폭"}>난폭</MenuItem>
                                 <MenuItem value={"소심"}>소심</MenuItem>
                         </Select>
-                        <AddCircleIcon sx = {{
+                        {/* <AddCircleIcon sx = {{
                             color: '#F5AB52',
                             width: '30px',
                             height:'30px',
-                        }}/>
+                        }}/> */}
                     </div>
                 </div>
             </div>

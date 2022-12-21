@@ -1,10 +1,14 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { makeStyles, styled } from '@material-ui/core/styles';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 import 'react-calendar/dist/Calendar.css';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MessageIcon from '@mui/icons-material/Message';
+import {getStorage, ref, uploadBytes, listAll, getDownloadURL, uploadBytesResumable} from "firebase/storage";
+import { collection, addDoc, getDocs,  query, where, serverTimestamp  } from "firebase/firestore"; 
+import {storage, db} from "../fbase.js";
+import { getAuth} from "firebase/auth";
 
 const useStyles = makeStyles({
     mainContainer: {
@@ -48,6 +52,44 @@ const useStyles = makeStyles({
         "&  .react-calendar__month-view__days":{
             height: '30vh',
         },
+        "& .highlight": {
+            color: 'red'
+        },
+        "& .react-calendar__month-view__days__day":{
+            position: 'relative',
+        },
+        "& .react-calendar__tile--active":{
+            borderRadius: '50px',
+            backgroundColor: '#b2b2b2',
+            "&:hover":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:active":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:focus":{
+                backgroundColor: '#b2b2b2'
+            },
+            "&:enabled":{
+                backgroundColor: '#b2b2b2'
+            },
+        },
+        "& .react-calendar__tile--now":{
+            backgroundColor: '#FFE3C1',
+            borderRadius: '50px',
+            "&:hover":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:active":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:focus":{
+                backgroundColor: '#FFE3C1'
+            },
+            "&:enabled":{
+                backgroundColor: '#FFE3C1'
+            },
+        }
     },
     calendarText: {
         display: 'flex',
@@ -136,27 +178,93 @@ const useStyles = makeStyles({
     },
     reactText:{
         fontSize: '12px',
+    },
+    calendarImgHighlight:{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '50px',
+        height: '50px',
+        borderRadius:'50px',
+        transform: 'translate(-50%, -50%)',
+        opacity: 0.6
     }
 })
 
 function MissionDetailScreen() {
 
     const classes = useStyles();
+    const [value, onChange] = useState(new Date());
+    const [missions, setMissionData] = useState([]);
+    const [todayMission, setTodayMission] = useState("미션을 수행하지 않았어요");
+    const [todayAnswer, settodayAnswer] = useState("미션을 수행하지 않았어요");
+    const [todayImg, settodayImg] = useState();
+
+    useEffect(() => {
+        console.log(value.toLocaleDateString())
+        setTodayMission("미션을 수행하지 않았어요")
+        settodayAnswer("미션을 수행하지 않았어요")
+        settodayImg()
+        missions.forEach((mission) =>{
+            console.log(mission.date + value.toLocaleDateString())
+            if(mission.date === value.toLocaleDateString()){
+                console.log("성공")
+                setTodayMission(mission.question)
+                settodayAnswer(mission.answer)
+                settodayImg(mission.picture)
+                return;
+            }
+        })
+    },[value]);
+
+    useEffect(() => {
+        getMissionData();
+    },[])
+
+    const getMissionData = async() =>{
+        const missions = [];
+        const auth = getAuth();
+        const q = query(collection(db, "mission"), where("user", "==", auth.currentUser.email));
+        const querySnapshot = await getDocs(q)
+        querySnapshot.forEach((doc) => {
+            missions.push(doc.data());
+            setMissionData(missions);
+            console.log(missions)
+        });
+    }
 
     return (
     <div className = {classes.mainContainer}>
         <div className = {classes.calendarCard}>
-            <Calendar  className = {classes.calendar} formatDay={(locale, date) => moment(date).format("D")}/>
+            <Calendar  
+                onChange={onChange}
+                value={value} 
+                className = {classes.calendar} 
+                formatDay={(locale, date) => moment(date).format("D")}
+                tileContent={({ date, view }) => {
+                    let completeDate = false;
+                    let imgURL = null;
+                    missions.forEach((mission) =>{
+                        console.log(mission.date + date.toLocaleDateString())
+                        if(mission.date === date.toLocaleDateString()){
+                            console.log("성공")
+                            imgURL = mission.picture;
+                            completeDate = true;
+                        }
+                    })
+                    return (completeDate ? <img className = {classes.calendarImgHighlight} src = {imgURL}/> : null)
+                }}
+                />
             <div className = {classes.calendarText}>
                 <img className = {classes.calendarTodayIcon} src= "img/dogFootIcon.svg"/>
-                <p className={classes.calendarTodayText}>2022년 x월 x일</p>
+                <p className={classes.calendarTodayText}>{value.getFullYear()}년 {value.getMonth()}월 {value.getDate()}일</p>
             </div>
         </div>
         <div className={classes.todayMissionCard}>
-            <div className = {classes.todayMissionText}><span className ={classes.missionNumber}>23.</span> 당신의 반려동물이 처음 왔을 때의 사진과 느낀점을 남겨주세요!</div>
+            <div className = {classes.todayMissionText}>{todayMission}</div>
             <div className={classes.answerCard}>
-                <img className= {classes.answerImage} src = "img/missionSubmitDog.png"/>
-                <p className = {classes.answerText}>크리스마스에 데려왔던 기억이 있어요 그때 정말이지.. 기분이 뛸듯이 기뻤답니다! 앞으로 잘해주자고 온 가족이 다짐했어요</p>
+                <img className= {classes.answerImage} src = {todayImg ? todayImg :"img/missionSubmitDog.png" }/>
+                <p className = {classes.answerText}>{todayAnswer}</p>
             </div>
         </div>
 

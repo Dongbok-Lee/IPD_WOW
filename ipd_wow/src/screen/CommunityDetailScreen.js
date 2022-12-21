@@ -36,6 +36,9 @@ const useStyles = makeStyles({
         borderRadius: '25px',
         width: '90vw',
         height: '30px',
+        "&:focus":{
+            outline:'none'
+        }
     },
     gridContainer:{
         marginTop: '10px',

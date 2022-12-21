@@ -1,7 +1,13 @@
-import React from 'react'
-import { makeStyles, styled } from '@material-ui/core/styles';
+import React, {useState} from 'react'
+import { makeStyles} from '@material-ui/core/styles';
 import { TextField, Button } from "@material-ui/core";
 import { useNavigate } from 'react-router-dom';
+import { auth, db} from '../fbase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth} from "firebase/auth";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { collection, addDoc, getDocs,  query, where, serverTimestamp  } from "firebase/firestore"; 
 
 const focusedColor = "#DD6280";
 
@@ -102,10 +108,70 @@ function SignInScreen() {
 
     const classes = useStyles();
     const navigate = useNavigate();
-
-    const goSubmitInfoPage = () =>{
-        navigate("/submit/petInfo");
+    const [open, setOpen] = React.useState(false);
+    const handleClick = () => {
+        setOpen(true);
+    };
+    const authLogin = async() =>{
+        const auth =getAuth();
+        console.log(auth.currentUser)
+        const q = query(collection(db, "user"), where("email", "==", auth.currentUser.email));
+        const querySnapshot = await getDocs(q)
+        console.log(querySnapshot.size)
+        if(querySnapshot.size === 0){
+            addUser();
+            console.log("회원가입");
+            goHomePage()
+        }else{
+            goHomePage()
+        }
     }
+    
+    const addUser = async() =>{
+        const auth =getAuth();
+        const docRef = await addDoc(collection(db, "user"), {
+            email: auth.currentUser.email,
+            name:auth.currentUser.displayName,
+            nickname:auth.currentUser.displayName,
+            profilePicture: auth.currentUser.photoURL,
+            level: 100,
+            createTime: serverTimestamp()
+    
+        });
+        console.log("Document written with ID: ", docRef.id);
+    }
+
+    const goHomePage = () =>{
+        navigate("/home");
+    }
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpen(false);
+    };
+
+    const [userData, setUserData] = useState(null);
+
+    function handleGoogleLogin() {
+      const provider = new GoogleAuthProvider(); // provider를 구글로 설정
+      signInWithPopup(auth, provider) // popup을 이용한 signup
+        .then((data) => {
+            setUserData(data.user); // user data 설정
+            console.log(data) // console로 들어온 데이터 표시
+            authLogin();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
+
     return (
         <div>
             <div className= {classes.loginRoot} >
@@ -116,20 +182,25 @@ function SignInScreen() {
                 </div>
                 <div className = {classes.loginButtons}>
                     <div>
-                        <img className = {classes.oauthButton} src="img/google.png"/>
-                        <img className = {classes.oauthButton} src="img/facebook.png"/>
-                        <img className = {classes.oauthButton} src="img/kakao.png"/>
-                        <img className = {classes.oauthButton} src="img/naver.png"/>
+                        <img  onClick={handleGoogleLogin} className = {classes.oauthButton} src="img/google.png"/>
+                        <img onClick={handleClick} className = {classes.oauthButton} src="img/facebook.png"/>
+                        <img onClick={handleClick} className = {classes.oauthButton} src="img/kakao.png"/>
+                        <img onClick={handleClick} className = {classes.oauthButton} src="img/naver.png"/>
                     </div>
-                    <Button  onClick = {goSubmitInfoPage} className = {classes.loginButton} variant="contained">로그인</Button>
-                    <Button  className = {classes.signUpButton} variant="contained">회원가입</Button>
+                    <Button  className = {classes.loginButton} variant="contained">로그인</Button>
+                    <Button onClick={handleClick}className = {classes.signUpButton} variant="contained">회원가입</Button>
                     <div className = {classes.findIdForm}>
-                        <a className = {classes.findIdText}>아이디 찾기</a>
-                        <a className = {classes.findIdText}>비밀번호 찾기</a>
+                        <a onClick={handleClick} className = {classes.findIdText}>아이디 찾기</a>
+                        <a onClick={handleClick} className = {classes.findIdText}>비밀번호 찾기</a>
                     </div>
                 </div>
 
             </div>
+            <Snackbar open={open}  autoHideDuration={1000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                    해당 기능은 준비중입니다!
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

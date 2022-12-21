@@ -20,6 +20,7 @@ import CommunityDetailScreen from './screen/CommunityDetailScreen';
 import ShoppingScreen from './screen/ShoppingScreen';
 import ShoppingDetailScreen from './screen/ShoppingDetailScreen';
 import SimpleSlider from './components/SimpleSlider';
+import PrivateRoute from './components/PrivateRoute';
 
 function setScreenSize() {
     let vh = window.innerHeight * 0.01;
@@ -41,12 +42,13 @@ const App = () => {
             <Footer/>
             <Reset/>
             <Routes>
-                <Route path="/" element={<SignInScreen/>}/>
+            <Route path="/" element={<SignInScreen/>}/>
+            <Route path="/" element={<PrivateRoute />}>
                 <Route path="/submit/petInfo" element={<PetInfoSubmitScreen/>}/>
                 <Route path="/submit/petPic" element={<PetPicSubitScreen/>}/>
 
                 <Route path="/home" element={<MainScreen/>}/>
-                <Route path="/CustomSpace" element={<CustomSpaceScreen/>}/>
+                <Route path="/customSpace" element={<CustomSpaceScreen/>}/>
 
                 <Route path="/mission" element={<MissionScreen/>}/>
                 <Route path="/missionDetail" element={<MissionDetailScreen/>}/>
@@ -59,7 +61,7 @@ const App = () => {
                 
                 <Route path="/shopping" element={<ShoppingScreen/>}/>
                 <Route path="/shoppingDetail" element={<ShoppingDetailScreen/>}/>
-
+            </Route>
             </Routes>
             </div>
         </React.Fragment>

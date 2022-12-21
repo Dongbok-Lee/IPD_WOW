@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles} from '@material-ui/core/styles';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
-
+import {db} from '../fbase';
+import { getAuth} from "firebase/auth";
+import { collection, addDoc, getDocs,  query, where, serverTimestamp  } from "firebase/firestore"; 
+import PetCard from '../components/PetCard';
 const useStyles = makeStyles({
 
     mainContainer:{
@@ -64,6 +65,7 @@ const useStyles = makeStyles({
         width: '80px',
         backgroundColor:'#F5AB52',
         borderRadius: '15px',
+        margin: '3px'
     },
     trophyBar:{
         left: '5vw',
@@ -75,6 +77,7 @@ const useStyles = makeStyles({
         height: '100%',
         width: '100vw',
         boxShadow: '5px 5px 5px grey',
+        transition: 'all 1s'
     },
     noTrophyBar:{
         left: '80vw',
@@ -86,6 +89,7 @@ const useStyles = makeStyles({
         height: '100%',
         width: '100vw',
         boxShadow: '5px 5px 5px grey',
+        transition: 'all 1s'
     },
     trophyButton:{
         borderRadius: '50px',
@@ -196,106 +200,63 @@ const useStyles = makeStyles({
         padding: '3px',
         fontWeight: 'bold',
     },
-    hamburgerMenu:{
-        display:'none',
-        position: 'absolute',
-        // display: 'flex',
-        justifyContent: 'start',
-        textAlign:'center',
-        flexDirection: 'column',
-        width: '70vw',
-        height: '70vh',
-        top: 0,
-        left: 0,
-        backgroundColor:'#ffffff',
-        borderRadius: '0 20px 20px 0',
-        margin: '0 0 60px',
-        zIndex: '2'
-    },
-    manuHeader:{
-        backgroundColor:'#F5AB52',
-        borderRadius: '0 20px 0 0',
-        height: '15vh',
-        display: 'flex',
-        justifyContent: 'right'
-    },
-    menuList:{
-        width: '100%',
-        display: 'flex',
-        margin: '10px',
-        fontWeight: "bold",
-        fontSize: '15px'
-    },
-    menuText:{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '30px',
-        width: '95%'
-    },
-    hrLine:{
-        height: '0.5px',
-        width: '100%',
-        backgroundColor: '#d9d9d9'
-    }
+
 });
 
 
 function MainScreen() {
     const classes = useStyles();
     const navigate = useNavigate();
+    const [pets, setPets] = useState([]);
+    const [trophyBar, setTrophyBar] = useState(false);
+    const [userData, setUserData] = useState([
+        {
+            name : "user",
+            email : "user@example.com",
+            userPicture : "",
+            level : 0,
+        }
+    ]);
+    
+    useEffect(() => {
+        getUserData()
+        getPetData()
+    },[])
+
+    useEffect(() => {
+        console.log(userData[0]);
+        console.log(pets)
+    },[userData,pets])
+
+    const getUserData = async() =>{
+        const user = [];
+        const auth = getAuth();
+        const q = query(collection(db, "user"), where("email", "==", auth.currentUser.email));
+        const querySnapshot = await getDocs(q)
+        querySnapshot.forEach((doc) => {
+            user.push(doc.data());
+            setUserData(user);
+            console.log(user)
+        });
+    }
+
+    const getPetData = async() =>{
+        const pet = [];
+        const auth = getAuth();
+        const q = query(collection(db, "pet"), where("user", "==", auth.currentUser.email));
+        const querySnapshot = await getDocs(q)
+        querySnapshot.forEach((doc) => {
+            pet.push(doc.data());
+            setPets(pet);
+        });
+    }
+
 return (
     <div className={classes.mainContainer}>
-        <div className = {classes.hamburgerMenu}>
-            <div className = {classes.manuHeader}>
-                <SettingsIcon sx = {{color:'#ffffff' ,width: '33px', height: '33px', margin : '5px'}}/>
-            </div>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>회원정보 수정</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            <div className={classes.hrLine}/>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>내 활동</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            <div className={classes.hrLine}/>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>공지사항</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            <div className={classes.hrLine}/>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>알림 설정</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            <div className={classes.hrLine}/>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>고객 센터</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            <div className={classes.hrLine}/>
-            <div className = {classes.menuList}>
-                <div className = {classes.menuText}>
-                    <p>앱 정보</p>
-                    <NavigateNextIcon sx = {{color: '#F5AB52'}}/>
-                </div>
-            </div>
-            
-        </div>
+
         <div className= {classes.userInfo}>
-            <div className = {classes.trophyBar}>
-                <div className= {classes.trophyButton}>
+            <div className = {`${trophyBar ? classes.trophyBar : classes.noTrophyBar}`}>
+                <div onClick = {()=> setTrophyBar(!trophyBar)} className= {classes.trophyButton}>
                     <img src="img/trophyYellow.png"/>
                 </div>
                 <div className= {classes.trophyListInfo}>
@@ -313,17 +274,17 @@ return (
             </div>
             <div className= {classes.userProfileCard}>
                 <div className= {classes.userPicture}>
-                    <img className = {classes.userImage} src='img/profileDummy.png' />
+                    <img className = {classes.userImage} src= {userData[0].profilePicture} />
                 </div>
                 <div className= {classes.userProfile}>
                     <div className = {classes.userName}>
-                        큐티뽀리
+                        {userData[0].name}
                     </div>
                     <div className = {classes.userLevel}>
-                        <div className = {classes.userLevelText}>LV.12</div>
+                        <div className = {classes.userLevelText}>LV. {userData[0].level/100}</div>
                         <div className= {classes.userLevelGraph}>
                             <div className = {classes.graphOutline}>
-                                <div className = {classes.graphInline}/>
+                                <div style = {{width: userData[0].level%100}} className = {classes.graphInline}/>
                             </div>
                         </div>
                     </div>
@@ -335,39 +296,16 @@ return (
                 <div className ={classes.petInfoText}>
                     나의 반려동물
                 </div>
-                <AddCircleIcon sx = {{
+                <AddCircleIcon onClick = {()=> navigate("/submit/petInfo")} sx = {{
                     color:"#F5AB52",
                     margin: '5px'
                 }}/>
             </div>
-            <div className = {classes.petCard}>
-                <div className = {classes.petPicAndName}>
-                    <img className = {classes.petPicture} src = "img/dummyDogProfile.png"/>
-                    <p className = {classes.petName}>탄이</p>
-                </div>
-                <div className = {classes.petInfoList}>
-                    <div className = {classes.petInfoLine}>
-                        <p className = {classes.petInfoFirst}>견/묘 종</p>
-                        <p className = {classes.petInfoLast}>믹스</p>
-                    </div>
-                    <div className = {classes.petInfoLine}>
-                        <p className = {classes.petInfoFirst}>성별</p>
-                        <p className = {classes.petInfoLast}>믹스</p>
-                    </div>
-                    <div className = {classes.petInfoLine}>
-                        <p className = {classes.petInfoFirst}>나이</p>
-                        <p className = {classes.petInfoLast}>믹스</p>
-                    </div>
-                    <div className = {classes.petInfoLine}>
-                        <p className = {classes.petInfoFirst}>성격</p>
-                        <p className = {classes.petInfoLast}>믹스</p>
-                    </div>
-                </div>
-            </div>
+            {pets.map((pet)=>(<PetCard petInfo = {pet}/>))}
         </div>
         <div className= {classes.petSpace}>
             <img className = {classes.spaceImage} src = "img/background2.png"/>
-            <a onClick = {() => navigate("/CustomSpace")} className = {classes.modifyButton}>
+            <a onClick = {() => navigate("/customSpace")} className = {classes.modifyButton}>
             <img className = {classes.modifyIcon} src = "img/modifyIcon.svg"/>
             </a>
             <div className={classes.dogImage}>

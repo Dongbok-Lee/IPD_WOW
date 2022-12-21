@@ -42,7 +42,10 @@ const useStyles = makeStyles({
         borderRadius: '25px',
         width: '90vw',
         height: '30px',
-        backgroundColor: '#F0F0F0'
+        backgroundColor: '#F0F0F0',
+        "&:focus":{
+            outline:'none'
+        }
     },
     shoppingHeaderText:{
         marginTop: '20px',
