@@ -1,12 +1,14 @@
-import React from 'react'
+import React,{useState, useEffect} from 'react'
 import { makeStyles, styled } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
-
+import { getAuth} from "firebase/auth";
+import { collection, addDoc, getDocs,  query, where, serverTimestamp  } from "firebase/firestore"; 
+import Pet from '../components/Pet';
+import {db} from '../fbase';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -106,14 +108,26 @@ TabPanel.propTypes = {
 };
 
     const classes = useStyles();
+    const [pets, setPets] = useState([]);
+    const getPetData = async() =>{
+        const pet = [];
+        const auth = getAuth();
+        const q = query(collection(db, "pet"), where("user", "==", auth.currentUser.email));
+        const querySnapshot = await getDocs(q)
+        querySnapshot.forEach((doc) => {
+            pet.push(doc.data());
+            setPets(pet);
+        });
+    }
+
+    useEffect(()=>{
+        getPetData();
+    },[])
 
     return (
         <div className = {classes.mainContainer}>
             <div className = {classes.customSpaceContainer}>
-                <div className = {classes.customDog}>
-                    <img src= "./img/customDog.png" />
-                    <p className = {classes.dogText}>마시멜</p>
-                </div>
+                <Pet index = {0} type = {pets[0].type} name = {pets[0].name}/>
             </div>
             <div>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
